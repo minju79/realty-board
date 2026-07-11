@@ -144,15 +144,15 @@
                     <span class="material-symbols-outlined">dashboard</span>
                     <span class="font-title-md text-title-md">대시보드</span>
                 </a>
-                <a class="flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all" href="#">
+                <a id="sidebar-menu-btn" class="flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all cursor-pointer" onclick="switchView('menu')">
                     <span class="material-symbols-outlined">drag_indicator</span>
-                    <span class="font-title-md text-title-md">UI/레이아웃 관리</span>
+                    <span class="font-title-md text-title-md">메뉴/링크 관리</span>
                 </a>
                 <a class="flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all" href="#">
                     <span class="material-symbols-outlined">home_work</span>
                     <span class="font-title-md text-title-md">매물 관리</span>
                 </a>
-                <a class="flex items-center gap-md px-base py-md rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-fixed/20 transition-all" href="admin">
+                <a id="sidebar-post-btn" class="flex items-center gap-md px-base py-md rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-fixed/20 transition-all cursor-pointer" onclick="switchView('post')">
                     <span class="material-symbols-outlined">newspaper</span>
                     <span class="font-title-md text-title-md">게시물 관리</span>
                 </a>
@@ -171,13 +171,15 @@
     <main class="flex-1 flex flex-col min-h-screen">
         <header class="flex justify-between items-center px-lg bg-surface-container-lowest h-16 border-b border-border-hairline">
             <div class="flex items-center gap-base">
-                <span class="font-headline-md text-headline-md text-on-surface">게시물 관리 대시보드</span>
+                <span id="header-title" class="font-headline-md text-headline-md text-on-surface">게시물 관리 대시보드</span>
             </div>
             <div class="flex items-center gap-md">
                 <span class="font-title-md text-title-md text-on-surface">관리자님</span>
             </div>
         </header>
-        <div class="p-base sm:p-xxl flex-grow">
+        
+        <!-- Post Management Section -->
+        <div id="post-mgmt-section" class="p-base sm:p-xxl flex-grow">
             <div class="mb-xxl flex justify-between items-end">
                 <div>
                     <h2 class="font-display-lg text-display-lg text-on-surface mb-xs">전체 게시글 관리</h2>
@@ -205,22 +207,96 @@
                 </div>
             </div>
         </div>
+
+        <!-- Menu Management Section -->
+        <div id="menu-mgmt-section" class="p-base sm:p-xxl flex-grow" style="display: none;">
+            <div class="mb-xxl flex justify-between items-end">
+                <div>
+                    <h2 class="font-display-lg text-display-lg text-on-surface mb-xs">메뉴/링크 관리</h2>
+                    <p class="text-secondary font-body-md">상단 네비게이션바의 메뉴명과 이동 링크를 수정하고 관리합니다.</p>
+                </div>
+                <button onclick="openMenuModal()" class="flex items-center gap-sm bg-primary-container text-white px-lg py-md rounded-lg font-bold hover:bg-primary-hover transition-all shadow-lg active:scale-95 text-body-sm sm:text-body-md">
+                    <span class="material-symbols-outlined text-[20px]">add</span> 새 메뉴 추가
+                </button>
+            </div>
+            <div class="bg-white border border-border-hairline rounded-xl shadow-sm overflow-x-auto">
+                <table class="min-w-full divide-y divide-border-hairline text-left">
+                    <thead class="bg-surface-gray">
+                        <tr>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">메뉴 명</th>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">이동 링크 (URL)</th>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="menus-table-body" class="bg-white divide-y divide-border-hairline text-body-sm"></tbody>
+                </table>
+            </div>
+        </div>
+
         <footer class="flex justify-between items-center px-xl py-md bg-surface-gray border-t border-border-hairline mt-auto">
             <p class="font-caption-md text-caption-md text-secondary">© 2026 모든AI 부동산중개사무소. All rights reserved.</p>
         </footer>
     </main>
 </div>
 
+<!-- Menu Add/Edit Modal -->
+<div id="menu-modal" class="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center hidden">
+    <div class="bg-white border border-border-hairline rounded-xl p-xl shadow-2xl w-full max-w-md mx-base">
+        <h3 id="modal-title" class="font-display-lg text-display-lg text-on-surface mb-lg">새 메뉴 추가</h3>
+        <form id="menu-form" class="space-y-lg">
+            <input type="hidden" id="menu-id">
+            <div>
+                <label for="menu-title" class="block font-title-md text-on-surface mb-xs">메뉴 명</label>
+                <input type="text" id="menu-title" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md" placeholder="예: 매물보기">
+            </div>
+            <div>
+                <label for="menu-url" class="block font-title-md text-on-surface mb-xs">이동 링크 (URL)</label>
+                <input type="text" id="menu-url" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md" placeholder="예: /news 또는 외부 URL">
+            </div>
+            <div class="flex justify-end gap-md">
+                <button type="button" onclick="closeMenuModal()" class="bg-surface-gray border border-border-hairline text-secondary font-bold px-lg py-md rounded-lg hover:bg-surface-container-low transition-colors">취소</button>
+                <button type="submit" class="bg-primary-container text-white font-bold px-xl py-md rounded-lg hover:bg-primary-hover shadow-md transition-all active:scale-95">저장</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="db.js"></script>
 <script>
+    let currentView = 'post';
+
     document.addEventListener('DOMContentLoaded', async () => {
         if (isAdmin()) {
             document.getElementById('dashboard-view').style.display = 'flex';
             await loadDashboardPosts();
+            await loadDashboardMenus();
         } else {
             document.getElementById('login-view').style.display = 'flex';
         }
     });
+
+    function switchView(view) {
+        currentView = view;
+        const postSection = document.getElementById('post-mgmt-section');
+        const menuSection = document.getElementById('menu-mgmt-section');
+        const postBtn = document.getElementById('sidebar-post-btn');
+        const menuBtn = document.getElementById('sidebar-menu-btn');
+        const headerTitle = document.getElementById('header-title');
+
+        if (view === 'post') {
+            postSection.style.display = 'block';
+            menuSection.style.display = 'none';
+            headerTitle.textContent = '게시물 관리 대시보드';
+            postBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-fixed/20 transition-all cursor-pointer";
+            menuBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all cursor-pointer";
+        } else if (view === 'menu') {
+            postSection.style.display = 'none';
+            menuSection.style.display = 'block';
+            headerTitle.textContent = '메뉴/링크 관리 대시보드';
+            postBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all cursor-pointer";
+            menuBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-fixed/20 transition-all cursor-pointer";
+        }
+    }
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -284,6 +360,77 @@
                 await loadDashboardPosts();
             } catch (err) {
                 alert('삭제 실패: ' + err.message);
+            }
+        }
+    }
+
+    async function loadDashboardMenus() {
+        try {
+            const menus = await getMenus();
+            const tbody = document.getElementById('menus-table-body');
+            tbody.innerHTML = '';
+
+            menus.forEach(menu => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-base py-md font-bold text-on-surface">${menu.title}</td>
+                    <td class="px-base py-md text-secondary font-mono">${menu.url}</td>
+                    <td class="px-base py-md whitespace-nowrap flex gap-md">
+                        <button onclick="openMenuModal('${menu.id}', '${menu.title}', '${menu.url}')" class="text-primary hover:text-primary-hover font-bold flex items-center gap-xs">
+                            <span class="material-symbols-outlined text-[16px]">edit</span> 수정
+                        </button>
+                        <button onclick="deleteDashboardMenu('${menu.id}')" class="text-status-error hover:text-red-700 font-bold flex items-center gap-xs">
+                            <span class="material-symbols-outlined text-[16px]">delete</span> 삭제
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    function openMenuModal(id = '', title = '', url = '') {
+        document.getElementById('menu-id').value = id;
+        document.getElementById('menu-title').value = title;
+        document.getElementById('menu-url').value = url;
+        document.getElementById('modal-title').textContent = id ? '메뉴 수정' : '새 메뉴 추가';
+        document.getElementById('menu-modal').classList.remove('hidden');
+    }
+
+    function closeMenuModal() {
+        document.getElementById('menu-modal').classList.add('hidden');
+    }
+
+    document.getElementById('menu-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('menu-id').value || 'menu_' + Date.now();
+        const title = document.getElementById('menu-title').value;
+        const url = document.getElementById('menu-url').value;
+
+        try {
+            await saveMenu({ id, title, url });
+            closeMenuModal();
+            await loadDashboardMenus();
+            if (typeof renderNavMenus === 'function') {
+                renderNavMenus();
+            }
+        } catch (err) {
+            alert('메뉴 저장 실패: ' + err.message);
+        }
+    });
+
+    async function deleteDashboardMenu(id) {
+        if (confirm('정말로 이 메뉴를 삭제하시겠습니까?')) {
+            try {
+                await deleteMenu(id);
+                await loadDashboardMenus();
+                if (typeof renderNavMenus === 'function') {
+                    renderNavMenus();
+                }
+            } catch (err) {
+                alert('메뉴 삭제 실패: ' + err.message);
             }
         }
     }

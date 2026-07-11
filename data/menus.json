@@ -1,0 +1,6 @@
+[
+  { "id": "menu_1", "title": "홈", "url": "/" },
+  { "id": "menu_2", "title": "매물보기", "url": "#" },
+  { "id": "menu_3", "title": "AI 뉴스", "url": "news" },
+  { "id": "menu_4", "title": "문의하기", "url": "#" }
+]

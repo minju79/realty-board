@@ -238,3 +238,180 @@ async function deletePost(id) {
   }
   localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(posts));
 }
+
+const LOCAL_MENUS_KEY = 'realty_menus';
+
+async function fetchMenusFromGithub(config) {
+  const token = String(config.github_token || '').trim().replace(/\s+/g, '');
+  const url = `https://api.github.com/repos/${config.github_owner}/${config.github_repo}/contents/data/menus.json`;
+  if (!token || !config.github_owner || !config.github_repo) {
+    throw new Error('GitHub configuration or token missing');
+  }
+  const res = await fetch(url, {
+    headers: {
+      'Authorization': `token ${token}`,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+  });
+  if (res.status === 404) {
+    return { content: [], sha: null };
+  }
+  if (!res.ok) {
+    throw new Error(`GitHub fetch failed: ${res.statusText}`);
+  }
+  const data = await res.json();
+  const content = JSON.parse(decodeURIComponent(atob(data.content).split('').map(c => {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join('')));
+  return { content, sha: data.sha };
+}
+
+async function saveMenusToGithub(config, menus, sha) {
+  const token = String(config.github_token || '').trim().replace(/\s+/g, '');
+  const url = `https://api.github.com/repos/${config.github_owner}/${config.github_repo}/contents/data/menus.json`;
+  const body = {
+    message: 'Update menus.json via admin interface',
+    content: btoa(encodeURIComponent(JSON.stringify(menus, null, 2)).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+      return String.fromCharCode(parseInt(p1, 16));
+    })),
+    sha: sha
+  };
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `token ${token}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    throw new Error(`GitHub save failed: ${res.statusText}`);
+  }
+  const data = await res.json();
+  return data.content.sha;
+}
+
+async function getMenus() {
+  try {
+    const config = await loadConfig();
+    const token = String(config.github_token || '').trim().replace(/\s+/g, '');
+    if (!token || !config.github_owner || !config.github_repo) {
+      const local = localStorage.getItem(LOCAL_MENUS_KEY);
+      if (local) return JSON.parse(local);
+      const r = await fetch('data/menus.json');
+      const d = await r.json();
+      localStorage.setItem(LOCAL_MENUS_KEY, JSON.stringify(d));
+      return d;
+    }
+    const { content } = await fetchMenusFromGithub(config);
+    localStorage.setItem(LOCAL_MENUS_KEY, JSON.stringify(content));
+    return content;
+  } catch (e) {
+    const local = localStorage.getItem(LOCAL_MENUS_KEY);
+    if (local) return JSON.parse(local);
+    try {
+      const r = await fetch('data/menus.json');
+      const d = await r.json();
+      localStorage.setItem(LOCAL_MENUS_KEY, JSON.stringify(d));
+      return d;
+    } catch(err) {
+      return [];
+    }
+  }
+}
+
+async function saveMenu(menu) {
+  const config = await loadConfig();
+  const token = String(config.github_token || '').trim().replace(/\s+/g, '');
+  let menus = [];
+  let sha = null;
+  let useGithub = false;
+  if (token && config.github_owner && config.github_repo) {
+    useGithub = true;
+    try {
+      const res = await fetchMenusFromGithub(config);
+      menus = res.content;
+      sha = res.sha;
+    } catch (e) {
+      useGithub = false;
+    }
+  }
+  if (!useGithub) {
+    menus = JSON.parse(localStorage.getItem(LOCAL_MENUS_KEY) || '[]');
+  }
+  const idx = menus.findIndex(m => m.id === menu.id);
+  if (idx > -1) {
+    menus[idx] = { ...menus[idx], ...menu };
+  } else {
+    menus.push(menu);
+  }
+  if (useGithub) {
+    await saveMenusToGithub(config, menus, sha);
+  }
+  localStorage.setItem(LOCAL_MENUS_KEY, JSON.stringify(menus));
+}
+
+async function deleteMenu(id) {
+  const config = await loadConfig();
+  const token = String(config.github_token || '').trim().replace(/\s+/g, '');
+  let menus = [];
+  let sha = null;
+  let useGithub = false;
+  if (token && config.github_owner && config.github_repo) {
+    useGithub = true;
+    try {
+      const res = await fetchMenusFromGithub(config);
+      menus = res.content;
+      sha = res.sha;
+    } catch (e) {
+      useGithub = false;
+    }
+  }
+  if (!useGithub) {
+    menus = JSON.parse(localStorage.getItem(LOCAL_MENUS_KEY) || '[]');
+  }
+  menus = menus.filter(m => m.id !== id);
+  if (useGithub) {
+    await saveMenusToGithub(config, menus, sha);
+  }
+  localStorage.setItem(LOCAL_MENUS_KEY, JSON.stringify(menus));
+}
+
+async function renderNavMenus() {
+  const navContainer = document.getElementById('desktop-nav');
+  if (!navContainer) return;
+  try {
+    const menus = await getMenus();
+    navContainer.innerHTML = '';
+    const currentPath = window.location.pathname;
+    
+    menus.forEach(menu => {
+      const a = document.createElement('a');
+      a.className = "font-headline-md text-headline-md transition-colors ";
+      
+      const isHome = (currentPath === '/' || currentPath.endsWith('index.html') || currentPath.endsWith('/')) && (menu.url === '/' || menu.url === '' || menu.url === '#');
+      const isCurrent = currentPath.includes(menu.url) && menu.url !== '/' && menu.url !== '#' && menu.url !== '';
+      
+      if (isHome || isCurrent) {
+        a.className += "text-primary font-bold border-b-2 border-primary pb-1";
+      } else {
+        a.className += "text-secondary dark:text-secondary-fixed-dim hover:text-primary";
+      }
+      
+      a.href = menu.url;
+      a.textContent = menu.title;
+      navContainer.appendChild(a);
+    });
+  } catch (err) {
+    console.error('Failed to render navigation menus:', err);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderNavMenus);
+} else {
+  renderNavMenus();
+}
+
+
