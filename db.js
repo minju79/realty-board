@@ -55,6 +55,14 @@ function renderMarkdown(src) {
   html = html.replace(/\*([\s\S]+?)\*/g, '<em>$1</em>');
   html = html.replace(/~~([\s\S]+?)~~/g, '<del>$1</del>');
 
+  html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, url) => {
+    const trimmed = url.trim();
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('/') || trimmed.startsWith('./') || trimmed.startsWith('../')) {
+      return `<img src="${trimmed}" alt="${alt}" class="max-w-full h-auto rounded-xl my-md shadow-sm border border-border-hairline mx-auto block" />`;
+    }
+    return '';
+  });
+
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, txt, url) => {
     const trimmed = url.trim();
     if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('mailto:')) {
