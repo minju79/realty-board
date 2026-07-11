@@ -28,6 +28,17 @@
             background: #ff6600;
             border-radius: 10px;
         }
+        @keyframes gradient-move {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .bg-primary-container, .bg-primary {
+            background: linear-gradient(135deg, #ff5500, #ff8800, #ff2200, #ffaa00) !important;
+            background-size: 300% 300% !important;
+            animation: gradient-move 5s ease infinite !important;
+            border: none !important;
+        }
     </style>
     <script id="tailwind-config">
         tailwind.config = {

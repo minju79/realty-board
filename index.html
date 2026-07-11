@@ -127,6 +127,20 @@
             height: 2px;
             background-color: #a33e00;
         }
+        @keyframes gradient-move {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .bg-primary-container, .bg-primary {
+            background: linear-gradient(135deg, #ff5500, #ff8800, #ff2200, #ffaa00) !important;
+            background-size: 300% 300% !important;
+            animation: gradient-move 5s ease infinite !important;
+            border: none !important;
+        }
+        #agent-login-btn:hover {
+            color: #ff5500 !important;
+        }
     </style>
 </head>
 <body class="bg-background text-on-surface selection:bg-primary-container selection:text-on-primary-container pb-16 md:pb-0">
