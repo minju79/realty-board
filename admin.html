@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>관리자 페이지 - 모든AI 부동산중개사무소</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-gray": "#f7f8f9",
+                        "surface": "#f9f9ff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#201a17",
+                        "inverse-surface": "#29313f",
+                        "inverse-primary": "#ffb596",
+                        "outline": "#8e7164",
+                        "on-primary-fixed-variant": "#7c2e00",
+                        "secondary-container": "#dfdfe5",
+                        "primary-fixed-dim": "#ffb596",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#655d58",
+                        "primary-hover": "#e14d00",
+                        "border-hairline": "#dcdee3",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e0e8fc",
+                        "outline-variant": "#e3bfb1",
+                        "status-success": "#079171",
+                        "on-secondary": "#ffffff",
+                        "primary": "#a33e00",
+                        "on-tertiary-fixed-variant": "#4d4541",
+                        "on-tertiary-container": "#352e2a",
+                        "surface-tint": "#a33e00",
+                        "surface-container-highest": "#dbe2f6",
+                        "on-secondary-container": "#616267",
+                        "surface-container": "#e7eeff",
+                        "surface-container-low": "#f0f3ff",
+                        "inverse-on-surface": "#ecf0ff",
+                        "on-secondary-fixed-variant": "#45474b",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#ffdbcd",
+                        "on-primary-container": "#561d00",
+                        "surface-bright": "#f9f9ff",
+                        "on-surface": "#141c29",
+                        "surface-variant": "#dbe2f6",
+                        "on-primary-fixed": "#360f00",
+                        "error-container": "#ffdad6",
+                        "background": "#f9f9ff",
+                        "on-surface-variant": "#5a4136",
+                        "on-secondary-fixed": "#1a1c20",
+                        "secondary": "#5d5e63",
+                        "on-error": "#ffffff",
+                        "status-error": "#fa342c",
+                        "secondary-fixed-dim": "#c6c6cb",
+                        "tertiary-container": "#9f9590",
+                        "secondary-fixed": "#e2e2e7",
+                        "primary-container": "#ff6600",
+                        "surface-dim": "#d2daed",
+                        "tertiary-fixed-dim": "#d0c4bf",
+                        "on-background": "#141c29",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ede0da"
+                    },
+                    "spacing": {
+                        "section": "64px",
+                        "xs": "2px",
+                        "grid-base": "4px",
+                        "xxl": "32px",
+                        "md": "8px",
+                        "base": "16px",
+                        "lg": "20px",
+                        "xl": "24px",
+                        "sm": "4px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "caption-md": ["Noto Sans KR"],
+                        "title-md": ["Noto Sans KR"],
+                        "body-md": ["Noto Sans KR"],
+                        "caption-sm": ["Noto Sans KR"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "display-xl": ["Plus Jakarta Sans"],
+                        "body-sm": ["Noto Sans KR"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "caption-md": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "title-md": ["16px", {"lineHeight": "22px", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "19px", "fontWeight": "400"}],
+                        "caption-sm": ["11px", {"lineHeight": "15px", "fontWeight": "400"}],
+                        "headline-lg": ["20px", {"lineHeight": "27px", "fontWeight": "700"}],
+                        "display-xl": ["26px", {"lineHeight": "35px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "headline-md": ["18px", {"lineHeight": "24px", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+
+<div id="login-view" class="min-h-screen flex items-center justify-center bg-surface-container-low px-base" style="display: none;">
+    <div class="bg-white border border-border-hairline rounded-xl p-xl shadow-lg w-full max-w-md">
+        <div class="text-center mb-xl">
+            <h1 class="font-display-lg text-display-lg font-bold text-primary">모든AI 부동산</h1>
+            <p class="text-secondary font-body-md mt-sm">관리자 대시보드 로그인</p>
+        </div>
+        <form id="login-form" class="space-y-lg">
+            <div>
+                <label for="password" class="block font-title-md text-on-surface mb-xs">비밀번호</label>
+                <input type="password" id="password" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md" placeholder="••••••••">
+            </div>
+            <div id="error-message" class="text-status-error text-body-sm hidden">비밀번호가 올바르지 않습니다.</div>
+            <button type="submit" class="w-full bg-primary-container text-white py-md rounded-lg font-bold hover:bg-primary-hover transition-all active:scale-95 shadow-md">
+                로그인
+            </button>
+        </form>
+    </div>
+</div>
+
+<div id="dashboard-view" class="min-h-screen flex flex-col md:flex-row" style="display: none;">
+    <aside class="w-full md:w-64 bg-surface border-b md:border-b-0 md:border-r border-border-hairline flex flex-col justify-between p-xl shrink-0">
+        <div>
+            <div class="px-lg mb-xxl cursor-pointer" onclick="location.href='/'">
+                <h1 class="font-headline-lg text-headline-lg text-primary">모든AI</h1>
+                <p class="font-caption-md text-caption-md text-secondary">Gwangju Real Estate AI</p>
+            </div>
+            <nav class="space-y-md px-md">
+                <a class="flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all" href="#">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="font-title-md text-title-md">대시보드</span>
+                </a>
+                <a class="flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all" href="#">
+                    <span class="material-symbols-outlined">drag_indicator</span>
+                    <span class="font-title-md text-title-md">UI/레이아웃 관리</span>
+                </a>
+                <a class="flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all" href="#">
+                    <span class="material-symbols-outlined">home_work</span>
+                    <span class="font-title-md text-title-md">매물 관리</span>
+                </a>
+                <a class="flex items-center gap-md px-base py-md rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-fixed/20 transition-all" href="admin">
+                    <span class="material-symbols-outlined">newspaper</span>
+                    <span class="font-title-md text-title-md">게시물 관리</span>
+                </a>
+                <a class="flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all" href="#">
+                    <span class="material-symbols-outlined">group</span>
+                    <span class="font-title-md text-title-md">회원 관리</span>
+                </a>
+            </nav>
+        </div>
+        <div class="px-md mt-auto pt-xl">
+            <button id="logout-btn" class="w-full bg-surface-gray border border-border-hairline text-secondary py-md rounded-lg font-bold hover:bg-surface-container-low transition-colors">
+                로그아웃
+            </button>
+        </div>
+    </aside>
+    <main class="flex-1 flex flex-col min-h-screen">
+        <header class="flex justify-between items-center px-lg bg-surface-container-lowest h-16 border-b border-border-hairline">
+            <div class="flex items-center gap-base">
+                <span class="font-headline-md text-headline-md text-on-surface">게시물 관리 대시보드</span>
+            </div>
+            <div class="flex items-center gap-md">
+                <span class="font-title-md text-title-md text-on-surface">관리자님</span>
+            </div>
+        </header>
+        <div class="p-base sm:p-xxl flex-grow">
+            <div class="mb-xxl flex justify-between items-end">
+                <div>
+                    <h2 class="font-display-lg text-display-lg text-on-surface mb-xs">전체 게시글 관리</h2>
+                    <p class="text-secondary font-body-md">등록된 부동산 뉴스 및 AI 소식을 수정하거나 삭제할 수 있습니다.</p>
+                </div>
+                <button onclick="location.href='news-write'" class="flex items-center gap-sm bg-primary-container text-white px-lg py-md rounded-lg font-bold hover:bg-primary-hover transition-all shadow-lg active:scale-95 text-body-sm sm:text-body-md">
+                    <span class="material-symbols-outlined text-[20px]">add</span> 새 글 작성
+                </button>
+            </div>
+            <div class="bg-white border border-border-hairline rounded-xl shadow-sm overflow-x-auto">
+                <table class="min-w-full divide-y divide-border-hairline text-left">
+                    <thead class="bg-surface-gray">
+                        <tr>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">번호</th>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">카테고리</th>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">제목</th>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">작성일</th>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="posts-table-body" class="bg-white divide-y divide-border-hairline text-body-sm"></tbody>
+                </table>
+                <div id="no-posts-alert" class="p-xxl text-center text-secondary hidden">
+                    작성된 게시글이 없습니다.
+                </div>
+            </div>
+        </div>
+        <footer class="flex justify-between items-center px-xl py-md bg-surface-gray border-t border-border-hairline mt-auto">
+            <p class="font-caption-md text-caption-md text-secondary">© 2026 모든AI 부동산중개사무소. All rights reserved.</p>
+        </footer>
+    </main>
+</div>
+
+<script src="db.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        if (isAdmin()) {
+            document.getElementById('dashboard-view').style.display = 'flex';
+            await loadDashboardPosts();
+        } else {
+            document.getElementById('login-view').style.display = 'flex';
+        }
+    });
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const psw = document.getElementById('password').value;
+        const config = await loadConfig();
+        
+        if (psw === config.admin_password) {
+            sessionStorage.setItem('isAdmin', 'true');
+            location.reload();
+        } else {
+            const err = document.getElementById('error-message');
+            err.classList.remove('hidden');
+        }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        sessionStorage.removeItem('isAdmin');
+        location.reload();
+    });
+
+    async function loadDashboardPosts() {
+        try {
+            const posts = await getPosts();
+            const tbody = document.getElementById('posts-table-body');
+            const alertBox = document.getElementById('no-posts-alert');
+            tbody.innerHTML = '';
+
+            if (!posts || posts.length === 0) {
+                alertBox.classList.remove('hidden');
+                return;
+            }
+            alertBox.classList.add('hidden');
+
+            posts.forEach((post, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-base py-md whitespace-nowrap text-secondary">${posts.length - index}</td>
+                    <td class="px-base py-md whitespace-nowrap"><span class="px-sm py-xs bg-surface-container text-primary font-bold rounded text-caption-sm">${post.category || '뉴스'}</span></td>
+                    <td class="px-base py-md max-w-xs truncate font-bold text-on-surface hover:text-primary cursor-pointer" onclick="location.href='news-detail?id=${post.id}'">${post.title}</td>
+                    <td class="px-base py-md whitespace-nowrap text-secondary">${post.date || ''}</td>
+                    <td class="px-base py-md whitespace-nowrap flex gap-md">
+                        <button onclick="location.href='news-write?id=${post.id}'" class="text-primary hover:text-primary-hover font-bold flex items-center gap-xs">
+                            <span class="material-symbols-outlined text-[16px]">edit</span> 수정
+                        </button>
+                        <button onclick="deleteDashboardPost('${post.id}')" class="text-status-error hover:text-red-700 font-bold flex items-center gap-xs">
+                            <span class="material-symbols-outlined text-[16px]">delete</span> 삭제
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function deleteDashboardPost(id) {
+        if (confirm('정말로 이 글을 삭제하시겠습니까?')) {
+            try {
+                await deletePost(id);
+                await loadDashboardPosts();
+            } catch (err) {
+                alert('삭제 실패: ' + err.message);
+            }
+        }
+    }
+</script>
+</body>
+</html>

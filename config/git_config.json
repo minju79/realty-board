@@ -1,0 +1,6 @@
+{
+  "github_token": "YOUR_GITHUB_TOKEN",
+  "github_owner": "minju79",
+  "github_repo": "realty-board",
+  "data_file_path": "data/posts.json"
+}

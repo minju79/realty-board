@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>글쓰기 - 모든AI 부동산중개사무소</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;family=Noto+Sans+KR:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; }
+        .font-display { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-gray": "#f7f8f9",
+                        "surface": "#f9f9ff",
+                        "on-error-container": "#93000a",
+                        "on-tertiary-fixed": "#201a17",
+                        "inverse-surface": "#29313f",
+                        "inverse-primary": "#ffb596",
+                        "outline": "#8e7164",
+                        "on-primary-fixed-variant": "#7c2e00",
+                        "secondary-container": "#dfdfe5",
+                        "primary-fixed-dim": "#ffb596",
+                        "on-tertiary": "#ffffff",
+                        "tertiary": "#655d58",
+                        "primary-hover": "#e14d00",
+                        "border-hairline": "#dcdee3",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e0e8fc",
+                        "outline-variant": "#e3bfb1",
+                        "status-success": "#079171",
+                        "on-secondary": "#ffffff",
+                        "primary": "#a33e00",
+                        "on-tertiary-fixed-variant": "#4d4541",
+                        "on-tertiary-container": "#352e2a",
+                        "surface-tint": "#a33e00",
+                        "surface-container-highest": "#dbe2f6",
+                        "on-secondary-container": "#616267",
+                        "surface-container": "#e7eeff",
+                        "surface-container-low": "#f0f3ff",
+                        "inverse-on-surface": "#ecf0ff",
+                        "on-secondary-fixed-variant": "#45474b",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-fixed": "#ffdbcd",
+                        "on-primary-container": "#561d00",
+                        "surface-bright": "#f9f9ff",
+                        "on-surface": "#141c29",
+                        "surface-variant": "#dbe2f6",
+                        "on-primary-fixed": "#360f00",
+                        "error-container": "#ffdad6",
+                        "background": "#f9f9ff",
+                        "on-surface-variant": "#5a4136",
+                        "on-secondary-fixed": "#1a1c20",
+                        "secondary": "#5d5e63",
+                        "on-error": "#ffffff",
+                        "status-error": "#fa342c",
+                        "secondary-fixed-dim": "#c6c6cb",
+                        "tertiary-container": "#9f9590",
+                        "secondary-fixed": "#e2e2e7",
+                        "primary-container": "#ff6600",
+                        "surface-dim": "#d2daed",
+                        "tertiary-fixed-dim": "#d0c4bf",
+                        "on-background": "#141c29",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#ede0da"
+                    },
+                    "spacing": {
+                        "section": "64px",
+                        "xs": "2px",
+                        "grid-base": "4px",
+                        "xxl": "32px",
+                        "md": "8px",
+                        "base": "16px",
+                        "lg": "20px",
+                        "xl": "24px",
+                        "sm": "4px"
+                    },
+                    "fontFamily": {
+                        "display-lg": ["Plus Jakarta Sans"],
+                        "caption-md": ["Noto Sans KR"],
+                        "title-md": ["Noto Sans KR"],
+                        "body-md": ["Noto Sans KR"],
+                        "caption-sm": ["Noto Sans KR"],
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "display-xl": ["Plus Jakarta Sans"],
+                        "body-sm": ["Noto Sans KR"],
+                        "headline-md": ["Plus Jakarta Sans"]
+                    },
+                    "fontSize": {
+                        "display-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "caption-md": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "title-md": ["16px", {"lineHeight": "22px", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "19px", "fontWeight": "400"}],
+                        "caption-sm": ["11px", {"lineHeight": "15px", "fontWeight": "400"}],
+                        "headline-lg": ["20px", {"lineHeight": "27px", "fontWeight": "700"}],
+                        "display-xl": ["26px", {"lineHeight": "35px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                        "headline-md": ["18px", {"lineHeight": "24px", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface min-h-screen pb-xxl flex flex-col justify-between">
+<header class="bg-surface-container-lowest border-b border-border-hairline shadow-sm sticky top-0 z-50">
+    <div class="flex justify-between items-center w-full px-base py-md max-w-7xl mx-auto h-16">
+        <h1 class="font-display-lg text-display-lg font-bold text-primary cursor-pointer" onclick="location.href='/'">모든AI 부동산중개사무소</h1>
+        <nav class="hidden md:flex gap-base items-center">
+            <a class="text-secondary hover:text-primary transition-colors font-title-md" href="/">홈</a>
+            <a class="text-secondary hover:text-primary transition-colors font-title-md" href="#">매물보기</a>
+            <a class="text-primary font-bold border-b-2 border-primary pb-1 font-title-md" href="news">AI 뉴스</a>
+            <a class="text-secondary hover:text-primary transition-colors font-title-md" href="#">문의하기</a>
+        </nav>
+        <div class="flex items-center gap-md">
+            <a href="tel:010-3973-4338" class="bg-primary-container text-white px-base py-sm rounded-lg font-bold hover:bg-primary-hover transition-all flex items-center gap-xs">
+                <span class="material-symbols-outlined text-[20px]">call</span>
+                전화상담
+            </a>
+        </div>
+    </div>
+</header>
+<main class="max-w-3xl mx-auto px-base py-section w-full flex-grow">
+    <div class="bg-white border border-border-hairline rounded-xl p-base sm:p-xl shadow-sm">
+        <h2 id="page-title" class="font-display-xl text-display-xl text-on-surface mb-xxl">새 글 작성</h2>
+        <form id="write-form" class="space-y-lg">
+            <div>
+                <label for="post-title" class="block font-title-md text-on-surface mb-xs">제목</label>
+                <input type="text" id="write-title" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md">
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-base">
+                <div>
+                    <label for="write-category" class="block font-title-md text-on-surface mb-xs">카테고리</label>
+                    <select id="write-category" class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md">
+                        <option value="부동산 뉴스">부동산 뉴스</option>
+                        <option value="최신 AI 뉴스">최신 AI 뉴스</option>
+                        <option value="부동산 소식">부동산 소식</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="write-date" class="block font-title-md text-on-surface mb-xs">작성일</label>
+                    <input type="date" id="write-date" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md">
+                </div>
+            </div>
+            <div>
+                <label for="write-content" class="block font-title-md text-on-surface mb-xs">내용 (마크다운 지원)</label>
+                <textarea id="write-content" rows="12" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md custom-scrollbar font-mono" placeholder="마크다운 형식으로 작성해 주세요. (예: # 대제목, **굵게**, [링크](http://...))"></textarea>
+            </div>
+            <div class="flex justify-end gap-md">
+                <button type="button" onclick="history.back()" class="bg-surface-gray border border-border-hairline text-secondary font-bold px-lg py-md rounded-lg hover:bg-surface-container-low transition-colors">취소</button>
+                <button type="submit" id="submit-btn" class="bg-primary-container text-white font-bold px-xl py-md rounded-lg hover:bg-primary-hover shadow-md transition-all active:scale-95 flex items-center gap-xs">
+                    <span class="material-symbols-outlined text-[18px]">save</span> 저장하기
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+<script src="db.js"></script>
+<script>
+    requireAdmin();
+
+    let editingId = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        // Set default date to today
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('write-date').value = today;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        editingId = urlParams.get('id');
+
+        if (editingId) {
+            document.getElementById('page-title').textContent = '게시글 수정';
+            try {
+                const posts = await getPosts();
+                const post = posts.find(p => p.id === editingId);
+                if (post) {
+                    document.getElementById('write-title').value = post.title;
+                    document.getElementById('write-category').value = post.category || '부동산 뉴스';
+                    document.getElementById('write-date').value = post.date || today;
+                    document.getElementById('write-content').value = post.content || '';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    });
+
+    document.getElementById('write-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const title = document.getElementById('write-title').value;
+        const category = document.getElementById('write-category').value;
+        const date = document.getElementById('write-date').value;
+        const content = document.getElementById('write-content').value;
+        
+        const submitBtn = document.getElementById('submit-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = '저장 중...';
+
+        const id = editingId || 'post_' + Date.now();
+        const postData = { id, title, category, date, content };
+
+        try {
+            await savePost(postData);
+            window.location.href = editingId ? `news-detail?id=${editingId}` : 'news';
+        } catch (err) {
+            alert('저장 실패: ' + err.message);
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">save</span> 저장하기';
+        }
+    });
+</script>
+</body>
+</html>
