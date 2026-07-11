@@ -29,20 +29,29 @@ function requireAdmin() {
 
 function renderMarkdown(src) {
   if (!src) return '';
+  
+  // Sanitize dangerous HTML tags and event listeners
   let html = src
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+    .replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, "")
+    .replace(/on\w+\s*=\s*(['"]).*?\1/gi, "")
+    .replace(/javascript:/gi, "");
 
   html = html.replace(/```([\s\S]+?)```/g, (match, code) => {
-    return `<pre class="bg-surface-gray border border-border-hairline p-md rounded-lg my-md overflow-x-auto text-body-sm font-mono"><code>${code.trim()}</code></pre>`;
+    const escapedCode = code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    return `<pre class="bg-surface-gray border border-border-hairline p-md rounded-lg my-md overflow-x-auto text-body-sm font-mono"><code>${escapedCode.trim()}</code></pre>`;
   });
 
   let parts = html.split('`');
   for (let i = 1; i < parts.length; i += 2) {
-    parts[i] = `<code class="bg-surface-gray border border-border-hairline px-xs py-[2px] rounded text-primary text-body-sm font-mono">${parts[i]}</code>`;
+    const escapedInline = parts[i]
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    parts[i] = `<code class="bg-surface-gray border border-border-hairline px-xs py-[2px] rounded text-primary text-body-sm font-mono">${escapedInline}</code>`;
   }
   html = parts.join('');
 
