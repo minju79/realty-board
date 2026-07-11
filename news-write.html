@@ -146,8 +146,31 @@
                 </div>
             </div>
             <div>
-                <label for="write-content" class="block font-title-md text-on-surface mb-xs">내용 (마크다운 지원)</label>
-                <textarea id="write-content" rows="12" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md custom-scrollbar font-mono" placeholder="마크다운 형식으로 작성해 주세요. (예: # 대제목, **굵게**, [링크](http://...))"></textarea>
+                <label for="write-content" class="block font-title-md text-on-surface mb-xs flex justify-between items-center">
+                    <span>내용</span>
+                    <span class="text-caption-md text-secondary">마크다운 도우미 툴바를 사용해 보세요</span>
+                </label>
+                <div class="flex flex-wrap gap-xs border border-border-hairline border-b-0 rounded-t-lg bg-surface-gray p-sm">
+                    <button type="button" onclick="insertFormat('h1')" class="px-md py-xs rounded hover:bg-secondary-container text-body-sm font-bold">제목1</button>
+                    <button type="button" onclick="insertFormat('h2')" class="px-md py-xs rounded hover:bg-secondary-container text-body-sm font-bold">제목2</button>
+                    <button type="button" onclick="insertFormat('bold')" class="px-md py-xs rounded hover:bg-secondary-container text-body-sm font-bold">굵게</button>
+                    <button type="button" onclick="insertFormat('italic')" class="px-md py-xs rounded hover:bg-secondary-container text-body-sm font-bold">기울임</button>
+                    <button type="button" onclick="insertFormat('quote')" class="px-md py-xs rounded hover:bg-secondary-container text-body-sm font-bold">인용구</button>
+                    <button type="button" onclick="insertFormat('link')" class="px-md py-xs rounded hover:bg-secondary-container text-body-sm font-bold flex items-center gap-xs">
+                        <span class="material-symbols-outlined text-[16px]">link</span> 링크
+                    </button>
+                    <button type="button" onclick="insertFormat('image')" class="px-md py-xs rounded hover:bg-secondary-container text-body-sm font-bold flex items-center gap-xs">
+                        <span class="material-symbols-outlined text-[16px]">image</span> 이미지
+                    </button>
+                    <button type="button" onclick="insertFormat('hr')" class="px-md py-xs rounded hover:bg-secondary-container text-body-sm font-bold">구분선</button>
+                </div>
+                <textarea id="write-content" rows="12" required class="w-full border-border-hairline rounded-b-lg focus:ring-primary-container focus:border-primary-container text-body-md custom-scrollbar font-mono border-t-0 p-base" placeholder="마크다운 형식으로 내용을 입력하세요. 위 툴바 버튼을 클릭하면 편리하게 서식이 삽입됩니다."></textarea>
+            </div>
+            <div>
+                <span class="block font-title-md text-on-surface mb-xs">실시간 미리보기</span>
+                <div id="write-preview" class="w-full border border-border-hairline rounded-lg p-base bg-surface-gray min-h-[150px] prose max-w-none text-body-sm custom-scrollbar overflow-y-auto">
+                    <span class="text-secondary italic">작성하신 내용이 여기에 실시간으로 보여집니다.</span>
+                </div>
             </div>
             <div class="flex justify-end gap-md">
                 <button type="button" onclick="history.back()" class="bg-surface-gray border border-border-hairline text-secondary font-bold px-lg py-md rounded-lg hover:bg-surface-container-low transition-colors">취소</button>
@@ -164,8 +187,67 @@
 
     let editingId = null;
 
+    function updatePreview() {
+        const content = document.getElementById('write-content').value;
+        const preview = document.getElementById('write-preview');
+        if (content.trim()) {
+            preview.innerHTML = renderMarkdown(content);
+        } else {
+            preview.innerHTML = '<span class="text-secondary italic">작성하신 내용이 여기에 실시간으로 보여집니다.</span>';
+        }
+    }
+
+    function insertFormat(type) {
+        const textarea = document.getElementById('write-content');
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const text = textarea.value;
+        const selected = text.substring(start, end);
+        let replacement = '';
+        let cursorOffset = 0;
+
+        switch (type) {
+            case 'h1':
+                replacement = `\n# ${selected || '대제목'}\n`;
+                cursorOffset = replacement.length;
+                break;
+            case 'h2':
+                replacement = `\n## ${selected || '중제목'}\n`;
+                cursorOffset = replacement.length;
+                break;
+            case 'bold':
+                replacement = `**${selected || '굵은글씨'}**`;
+                cursorOffset = replacement.length - 2;
+                break;
+            case 'italic':
+                replacement = `*${selected || '기울임'}*`;
+                cursorOffset = replacement.length - 1;
+                break;
+            case 'quote':
+                replacement = `\n> ${selected || '인용문'}\n`;
+                cursorOffset = replacement.length;
+                break;
+            case 'link':
+                replacement = `[${selected || '연결할 글자'}](https://)`;
+                cursorOffset = replacement.length - 1;
+                break;
+            case 'image':
+                replacement = `![${selected || '이미지 설명'}](https://)`;
+                cursorOffset = replacement.length - 1;
+                break;
+            case 'hr':
+                replacement = `\n---\n`;
+                cursorOffset = replacement.length;
+                break;
+        }
+
+        textarea.value = text.substring(0, start) + replacement + text.substring(end);
+        textarea.focus();
+        textarea.setSelectionRange(start + cursorOffset, start + cursorOffset);
+        updatePreview();
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
-        // Set default date to today
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('write-date').value = today;
 
@@ -182,11 +264,14 @@
                     document.getElementById('write-category').value = post.category || '부동산 뉴스';
                     document.getElementById('write-date').value = post.date || today;
                     document.getElementById('write-content').value = post.content || '';
+                    updatePreview();
                 }
             } catch (err) {
                 console.error(err);
             }
         }
+        
+        document.getElementById('write-content').addEventListener('input', updatePreview);
     });
 
     document.getElementById('write-form').addEventListener('submit', async (e) => {
@@ -216,3 +301,4 @@
 </script>
 </body>
 </html>
+
