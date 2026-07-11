@@ -167,6 +167,10 @@
                     <span class="material-symbols-outlined">newspaper</span>
                     <span class="font-title-md text-title-md">게시물 관리</span>
                 </a>
+                <a id="sidebar-agent-btn" class="flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all cursor-pointer" onclick="switchView('agent')">
+                    <span class="material-symbols-outlined">smart_toy</span>
+                    <span class="font-title-md text-title-md">에이전트 관리</span>
+                </a>
                 <a class="flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all" href="#">
                     <span class="material-symbols-outlined">group</span>
                     <span class="font-title-md text-title-md">회원 관리</span>
@@ -244,6 +248,33 @@
             </div>
         </div>
 
+        <!-- Agent Management Section -->
+        <div id="agent-mgmt-section" class="p-base sm:p-xxl flex-grow" style="display: none;">
+            <div class="mb-xxl flex justify-between items-end">
+                <div>
+                    <h2 class="font-display-lg text-display-lg text-on-surface mb-xs">AI 에이전트 관리</h2>
+                    <p class="text-secondary font-body-md">메인 화면의 AI 에이전트 카드 정보(이미지, 링크, 제목, 설명)를 수정하고 관리합니다.</p>
+                </div>
+                <button onclick="openAgentModal()" class="flex items-center gap-sm bg-primary-container text-white px-lg py-md rounded-lg font-bold hover:bg-primary-hover transition-all shadow-lg active:scale-95 text-body-sm sm:text-body-md">
+                    <span class="material-symbols-outlined text-[20px]">add</span> 새 에이전트 추가
+                </button>
+            </div>
+            <div class="bg-white border border-border-hairline rounded-xl shadow-sm overflow-x-auto">
+                <table class="min-w-full divide-y divide-border-hairline text-left">
+                    <thead class="bg-surface-gray">
+                        <tr>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">이미지</th>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">에이전트 명</th>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">설명</th>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">연결 링크</th>
+                            <th class="px-base py-md text-caption-md font-bold text-secondary uppercase tracking-wider">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="agents-table-body" class="bg-white divide-y divide-border-hairline text-body-sm"></tbody>
+                </table>
+            </div>
+        </div>
+
         <footer class="flex justify-between items-center px-xl py-md bg-surface-gray border-t border-border-hairline mt-auto">
             <p class="font-caption-md text-caption-md text-secondary">© 2026 모든AI 부동산중개사무소. All rights reserved.</p>
         </footer>
@@ -272,6 +303,36 @@
     </div>
 </div>
 
+<!-- Agent Add/Edit Modal -->
+<div id="agent-modal" class="fixed inset-0 bg-black/50 z-[100] flex items-center justify-center hidden">
+    <div class="bg-white border border-border-hairline rounded-xl p-xl shadow-2xl w-full max-w-md mx-base">
+        <h3 id="agent-modal-title" class="font-display-lg text-display-lg text-on-surface mb-lg">새 에이전트 추가</h3>
+        <form id="agent-form" class="space-y-lg">
+            <input type="hidden" id="agent-id">
+            <div>
+                <label for="agent-title" class="block font-title-md text-on-surface mb-xs">에이전트 명</label>
+                <input type="text" id="agent-title" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md" placeholder="예: 매물 광고문구 생성기">
+            </div>
+            <div>
+                <label for="agent-desc" class="block font-title-md text-on-surface mb-xs">설명글</label>
+                <input type="text" id="agent-desc" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md" placeholder="예: 네이버·카카오·인스타용 맞춤 광고문구 자동 생성">
+            </div>
+            <div>
+                <label for="agent-image" class="block font-title-md text-on-surface mb-xs">이미지 주소 (URL)</label>
+                <input type="text" id="agent-image" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md" placeholder="예: https://example.com/icon.png">
+            </div>
+            <div>
+                <label for="agent-url" class="block font-title-md text-on-surface mb-xs">연결 링크 (URL)</label>
+                <input type="text" id="agent-url" required class="w-full border-border-hairline rounded-lg focus:ring-primary-container focus:border-primary-container text-body-md" placeholder="예: https://service-2026ai.ai.studio">
+            </div>
+            <div class="flex justify-end gap-md">
+                <button type="button" onclick="closeAgentModal()" class="bg-surface-gray border border-border-hairline text-secondary font-bold px-lg py-md rounded-lg hover:bg-surface-container-low transition-colors">취소</button>
+                <button type="submit" class="bg-primary-container text-white font-bold px-xl py-md rounded-lg hover:bg-primary-hover shadow-md transition-all active:scale-95">저장</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="db.js"></script>
 <script>
     let currentView = 'post';
@@ -281,6 +342,7 @@
             document.getElementById('dashboard-view').style.display = 'flex';
             await loadDashboardPosts();
             await loadDashboardMenus();
+            await loadDashboardAgents();
         } else {
             document.getElementById('login-view').style.display = 'flex';
         }
@@ -290,22 +352,36 @@
         currentView = view;
         const postSection = document.getElementById('post-mgmt-section');
         const menuSection = document.getElementById('menu-mgmt-section');
+        const agentSection = document.getElementById('agent-mgmt-section');
         const postBtn = document.getElementById('sidebar-post-btn');
         const menuBtn = document.getElementById('sidebar-menu-btn');
+        const agentBtn = document.getElementById('sidebar-agent-btn');
         const headerTitle = document.getElementById('header-title');
 
         if (view === 'post') {
             postSection.style.display = 'block';
             menuSection.style.display = 'none';
+            agentSection.style.display = 'none';
             headerTitle.textContent = '게시물 관리 대시보드';
             postBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-fixed/20 transition-all cursor-pointer";
             menuBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all cursor-pointer";
+            agentBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all cursor-pointer";
         } else if (view === 'menu') {
             postSection.style.display = 'none';
             menuSection.style.display = 'block';
+            agentSection.style.display = 'none';
             headerTitle.textContent = '메뉴/링크 관리 대시보드';
             postBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all cursor-pointer";
             menuBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-fixed/20 transition-all cursor-pointer";
+            agentBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all cursor-pointer";
+        } else if (view === 'agent') {
+            postSection.style.display = 'none';
+            menuSection.style.display = 'none';
+            agentSection.style.display = 'block';
+            headerTitle.textContent = 'AI 에이전트 관리 대시보드';
+            postBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all cursor-pointer";
+            menuBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-secondary hover:bg-surface-container-low transition-all cursor-pointer";
+            agentBtn.className = "flex items-center gap-md px-base py-md rounded-lg text-primary font-bold border-r-4 border-primary bg-primary-fixed/20 transition-all cursor-pointer";
         }
     }
 
@@ -442,6 +518,79 @@
                 }
             } catch (err) {
                 alert('메뉴 삭제 실패: ' + err.message);
+            }
+        }
+    }
+
+    async function loadDashboardAgents() {
+        try {
+            const agents = await getAgents();
+            const tbody = document.getElementById('agents-table-body');
+            tbody.innerHTML = '';
+
+            agents.forEach(agent => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="px-base py-md whitespace-nowrap">
+                        <img src="${agent.image || 'https://lh3.googleusercontent.com/aida-public/AB6AXuDvKEYp8iKZnTsfk1O2hZoawkpHUb7zwixmZzBfV-et6Ab4UNr7k5K-MHXenc1yjNmiyQksAWJI_NrEvXYfhMNVAvho3WAb0d9Ly_5Ar-nLy_btO9whXlYIde3hkJqoOxkarrmXszwcbGU1lbKlK_9FnsD7LF4lzzGCkBUBif96SCKLhGDSTh0-SmpM3fmBllF9I65fNcMwQO4tKCYnSGapHi_bEhPMXWG2WbwaV02ea2BkVmQx33GG'}" alt="${agent.title}" class="w-10 h-10 object-contain rounded bg-surface-gray border border-border-hairline">
+                    </td>
+                    <td class="px-base py-md font-bold text-on-surface">${agent.title}</td>
+                    <td class="px-base py-md text-secondary truncate max-w-xs">${agent.desc}</td>
+                    <td class="px-base py-md text-secondary font-mono">${agent.url}</td>
+                    <td class="px-base py-md whitespace-nowrap flex gap-md">
+                        <button onclick="openAgentModal('${agent.id}', '${agent.title.replace(/'/g, "\\'")}', '${agent.desc.replace(/'/g, "\\'")}', '${agent.image.replace(/'/g, "\\'")}', '${agent.url.replace(/'/g, "\\'")}')" class="text-primary hover:text-primary-hover font-bold flex items-center gap-xs">
+                            <span class="material-symbols-outlined text-[16px]">edit</span> 수정
+                        </button>
+                        <button onclick="deleteDashboardAgent('${agent.id}')" class="text-status-error hover:text-red-700 font-bold flex items-center gap-xs">
+                            <span class="material-symbols-outlined text-[16px]">delete</span> 삭제
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        } catch (err) {
+            console.error('Failed to load dashboard agents:', err);
+        }
+    }
+
+    function openAgentModal(id = '', title = '', desc = '', image = '', url = '') {
+        document.getElementById('agent-id').value = id;
+        document.getElementById('agent-title').value = title;
+        document.getElementById('agent-desc').value = desc;
+        document.getElementById('agent-image').value = image;
+        document.getElementById('agent-url').value = url;
+        document.getElementById('agent-modal-title').textContent = id ? '에이전트 수정' : '새 에이전트 추가';
+        document.getElementById('agent-modal').classList.remove('hidden');
+    }
+
+    function closeAgentModal() {
+        document.getElementById('agent-modal').classList.add('hidden');
+    }
+
+    document.getElementById('agent-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('agent-id').value || 'agent_' + Date.now();
+        const title = document.getElementById('agent-title').value;
+        const desc = document.getElementById('agent-desc').value;
+        const image = document.getElementById('agent-image').value;
+        const url = document.getElementById('agent-url').value;
+
+        try {
+            await saveAgent({ id, title, desc, image, url });
+            closeAgentModal();
+            await loadDashboardAgents();
+        } catch (err) {
+            alert('에이전트 저장 실패: ' + err.message);
+        }
+    });
+
+    async function deleteDashboardAgent(id) {
+        if (confirm('정말로 이 에이전트를 삭제하시겠습니까?')) {
+            try {
+                await deleteAgent(id);
+                await loadDashboardAgents();
+            } catch (err) {
+                alert('에이전트 삭제 실패: ' + err.message);
             }
         }
     }

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "agent_1",
+    "title": "올인원 매물분석",
+    "desc": "매물 하나를 입력하면 실거래·시세·투자지표를 한 번에 분석",
+    "url": "#",
+    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDvKEYp8iKZnTsfk1O2hZoawkpHUb7zwixmZzBfV-et6Ab4UNr7k5K-MHXenc1yjNmiyQksAWJI_NrEvXYfhMNVAvho3WAb0d9Ly_5Ar-nLy_btO9whXlYIde3hkJqoOxkarrmXszwcbGU1lbKlK_9FnsD7LF4lzzGCkBUBif96SCKLhGDSTh0-SmpM3fmBllF9I65fNcMwQO4tKCYnSGapHi_bEhPMXWG2WbwaV02ea2BkVmQx33GG"
+  },
+  {
+    "id": "agent_2",
+    "title": "계약서 자동완성",
+    "desc": "조건 입력만으로 매매·전세·월세 계약서 초안을 자동 생성",
+    "url": "#",
+    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDvKEYp8iKZnTsfk1O2hZoawkpHUb7zwixmZzBfV-et6Ab4UNr7k5K-MHXenc1yjNmiyQksAWJI_NrEvXYfhMNVAvho3WAb0d9Ly_5Ar-nLy_btO9whXlYIde3hkJqoOxkarrmXszwcbGU1lbKlK_9FnsD7LF4lzzGCkBUBif96SCKLhGDSTh0-SmpM3fmBllF9I65fNcMwQO4tKCYnSGapHi_bEhPMXWG2WbwaV02ea2BkVmQx33GG"
+  },
+  {
+    "id": "agent_3",
+    "title": "매물 광고문구 생성기",
+    "desc": "네이버·카카오·인스타용 법률 준수 맞춤 광고문구 자동 생성",
+    "url": "#",
+    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDvKEYp8iKZnTsfk1O2hZoawkpHUb7zwixmZzBfV-et6Ab4UNr7k5K-MHXenc1yjNmiyQksAWJI_NrEvXYfhMNVAvho3WAb0d9Ly_5Ar-nLy_btO9whXlYIde3hkJqoOxkarrmXszwcbGU1lbKlK_9FnsD7LF4lzzGCkBUBif96SCKLhGDSTh0-SmpM3fmBllF9I65fNcMwQO4tKCYnSGapHi_bEhPMXWG2WbwaV02ea2BkVmQx33GG"
+  }
+]

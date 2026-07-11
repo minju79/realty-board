@@ -431,4 +431,149 @@ if (document.readyState === 'loading') {
   renderNavMenus();
 }
 
+const LOCAL_AGENTS_KEY = 'realty_agents';
+
+async function fetchAgentsFromGithub(config) {
+  const token = String(config.github_token || '').trim().replace(/\s+/g, '');
+  const url = `https://api.github.com/repos/${config.github_owner}/${config.github_repo}/contents/data/agents.json`;
+  if (!token || !config.github_owner || !config.github_repo) {
+    throw new Error('GitHub configuration or token missing');
+  }
+  const res = await fetch(url, {
+    headers: {
+      'Authorization': `token ${token}`,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+  });
+  if (res.status === 404) {
+    return { content: [], sha: null };
+  }
+  if (!res.ok) {
+    throw new Error(`GitHub fetch failed: ${res.statusText}`);
+  }
+  const data = await res.json();
+  const content = JSON.parse(decodeURIComponent(atob(data.content).split('').map(c => {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join('')));
+  return { content, sha: data.sha };
+}
+
+async function saveAgentsToGithub(config, agents, sha) {
+  const token = String(config.github_token || '').trim().replace(/\s+/g, '');
+  const url = `https://api.github.com/repos/${config.github_owner}/${config.github_repo}/contents/data/agents.json`;
+  const body = {
+    message: 'Update agents.json via admin interface',
+    content: btoa(encodeURIComponent(JSON.stringify(agents, null, 2)).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+      return String.fromCharCode(parseInt(p1, 16));
+    })),
+    sha: sha
+  };
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `token ${token}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(body)
+  });
+  if (!res.ok) {
+    throw new Error(`GitHub save failed: ${res.statusText}`);
+  }
+  const data = await res.json();
+  return data.content.sha;
+}
+
+async function getAgents() {
+  let agents = [];
+  try {
+    const config = await loadConfig();
+    const token = String(config.github_token || '').trim().replace(/\s+/g, '');
+    if (token && config.github_owner && config.github_repo) {
+      const res = await fetchAgentsFromGithub(config);
+      agents = res.content;
+      localStorage.setItem(LOCAL_AGENTS_KEY, JSON.stringify(agents));
+      return agents;
+    }
+  } catch (err) {
+    console.warn('GitHub getAgents failed, trying local storage', err);
+  }
+  
+  const local = localStorage.getItem(LOCAL_AGENTS_KEY);
+  if (local) {
+    return JSON.parse(local);
+  }
+  
+  try {
+    const res = await fetch('data/agents.json');
+    if (res.ok) {
+      agents = await res.json();
+      localStorage.setItem(LOCAL_AGENTS_KEY, JSON.stringify(agents));
+      return agents;
+    }
+  } catch (e) {
+    console.error('Failed to load default agents', e);
+  }
+  return [];
+}
+
+async function saveAgent(agent) {
+  const config = await loadConfig();
+  const token = String(config.github_token || '').trim().replace(/\s+/g, '');
+  let agents = [];
+  let sha = null;
+  let useGithub = false;
+  if (token && config.github_owner && config.github_repo) {
+    useGithub = true;
+    try {
+      const res = await fetchAgentsFromGithub(config);
+      agents = res.content;
+      sha = res.sha;
+    } catch (e) {
+      useGithub = false;
+    }
+  }
+  if (!useGithub) {
+    agents = JSON.parse(localStorage.getItem(LOCAL_AGENTS_KEY) || '[]');
+  }
+  
+  const existingIndex = agents.findIndex(a => a.id === agent.id);
+  if (existingIndex > -1) {
+    agents[existingIndex] = agent;
+  } else {
+    agents.push(agent);
+  }
+  
+  if (useGithub) {
+    await saveAgentsToGithub(config, agents, sha);
+  }
+  localStorage.setItem(LOCAL_AGENTS_KEY, JSON.stringify(agents));
+}
+
+async function deleteAgent(id) {
+  const config = await loadConfig();
+  const token = String(config.github_token || '').trim().replace(/\s+/g, '');
+  let agents = [];
+  let sha = null;
+  let useGithub = false;
+  if (token && config.github_owner && config.github_repo) {
+    useGithub = true;
+    try {
+      const res = await fetchAgentsFromGithub(config);
+      agents = res.content;
+      sha = res.sha;
+    } catch (e) {
+      useGithub = false;
+    }
+  }
+  if (!useGithub) {
+    agents = JSON.parse(localStorage.getItem(LOCAL_AGENTS_KEY) || '[]');
+  }
+  agents = agents.filter(a => a.id !== id);
+  if (useGithub) {
+    await saveAgentsToGithub(config, agents, sha);
+  }
+  localStorage.setItem(LOCAL_AGENTS_KEY, JSON.stringify(agents));
+}
+
 
